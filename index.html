@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KL Organics Dispatch</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161d27; --panel2:#1e2836; --line:#2c3849;
+    --ink:#f2f5f9; --dim:#93a1b4;
+    --green:#22c55e; --amber:#f59e0b; --red:#ef4444; --blue:#38bdf8; --purple:#a78bfa;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Helvetica Neue", Arial, sans-serif;
+    line-height:1.45; padding-bottom:60px;
+  }
+  header{
+    display:flex; align-items:center; gap:14px;
+    padding:18px 28px; border-bottom:3px solid var(--green);
+    background:linear-gradient(90deg,#101821,#0d1117);
+  }
+  header .logo{
+    width:44px; height:44px; background:var(--green); color:#06240f;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:20px; border-radius:8px;
+  }
+  header h1{font-size:22px; letter-spacing:1px; text-transform:uppercase;}
+  header p{color:var(--dim); font-size:12px; text-transform:uppercase; letter-spacing:2px;}
+  header .clock{
+    margin-left:auto; background:var(--panel2); border:1px solid var(--line);
+    padding:8px 14px; border-radius:8px; font-variant-numeric:tabular-nums;
+  }
+  header .clock b{color:var(--blue);}
+  .banner{
+    background:#132a1b; border-bottom:1px solid #1f5133; color:#b9f0cd;
+    font-size:12px; padding:8px 28px; text-transform:uppercase; letter-spacing:1.5px;
+  }
+  main{max-width:1200px; margin:0 auto; padding:24px 28px; display:flex; flex-direction:column; gap:26px;}
+  section{
+    background:var(--panel); border:1px solid var(--line); border-radius:12px;
+    padding:20px 22px;
+  }
+  .sec-head{display:flex; align-items:baseline; gap:12px; margin-bottom:6px;}
+  .sec-head h2{font-size:17px; text-transform:uppercase; letter-spacing:1.5px;}
+  .sec-num{
+    background:var(--panel2); border:1px solid var(--line); color:var(--dim);
+    font-size:12px; font-weight:700; padding:3px 9px; border-radius:6px;
+  }
+  .sec-sub{color:var(--dim); font-size:13px; margin-bottom:16px;}
+  .badge{
+    display:inline-block; font-size:10.5px; font-weight:800; letter-spacing:1px;
+    text-transform:uppercase; padding:3px 9px; border-radius:5px;
+  }
+  .b-green{background:#12321f; color:#4ade80; border:1px solid #1e5c34;}
+  .b-red{background:#321414; color:#f87171; border:1px solid #6b2323;}
+  .b-amber{background:#332612; color:#fbbf24; border:1px solid #6b4e1e;}
+  .b-blue{background:#122c3a; color:#38bdf8; border:1px solid #1e4d63;}
+  .b-purple{background:#241d3a; color:#a78bfa; border:1px solid #40346a;}
+
+  /* section 1 */
+  .req-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:14px;}
+  .card{
+    background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:14px 16px;
+  }
+  .card h3{font-size:15px; margin-bottom:2px;}
+  .card .meta{color:var(--dim); font-size:12.5px; margin-bottom:10px;}
+  .card .row{display:flex; justify-content:space-between; font-size:13px; padding:4px 0; border-top:1px dashed var(--line);}
+  .card .row span:first-child{color:var(--dim);}
+  .card .actions{margin-top:12px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;}
+  button{
+    font:inherit; font-weight:700; font-size:12.5px; cursor:pointer; border-radius:7px;
+    padding:8px 14px; border:1px solid transparent; letter-spacing:.5px;
+    text-transform:uppercase; background:var(--green); color:#06240f;
+  }
+  button.ghost{background:transparent; color:var(--dim); border-color:var(--line);}
+  button:disabled{opacity:.45; cursor:not-allowed;}
+  .note{font-size:12px; margin-top:8px; min-height:15px;}
+  .note.ok{color:var(--green);} .note.err{color:var(--red);}
+  .weight-big{font-size:26px; font-weight:900; font-variant-numeric:tabular-nums;}
+  .weight-big small{font-size:12px; color:var(--dim); font-weight:600;}
+
+  /* section 2 */
+  .worker-row{
+    display:flex; align-items:center; gap:14px; padding:12px 14px;
+    background:var(--panel2); border:1px solid var(--line); border-radius:10px; margin-bottom:10px;
+  }
+  .avatar{
+    width:38px; height:38px; border-radius:50%; flex:none;
+    display:flex; align-items:center; justify-content:center; font-weight:900; color:#06240f;
+    background:var(--blue);
+  }
+  .worker-row .who{flex:1; min-width:0;}
+  .worker-row .who b{display:block; font-size:14px;}
+  .worker-row .who span{font-size:12px; color:var(--dim);}
+  .worker-row .carry{font-size:12.5px; color:var(--amber); max-width:280px; text-align:right;}
+  .worker-row select{
+    font:inherit; font-size:13px; background:var(--bg); color:var(--ink);
+    border:1px solid var(--line); border-radius:7px; padding:7px 10px;
+  }
+  .queue-box{margin-top:16px; border-top:1px solid var(--line); padding-top:14px;}
+  .queue-box h4{font-size:12px; text-transform:uppercase; letter-spacing:1.5px; color:var(--dim); margin-bottom:10px;}
+  .queue-item{
+    display:flex; align-items:center; gap:10px; background:#12291c; border:1px solid #1f5133;
+    border-radius:8px; padding:9px 13px; margin-bottom:8px; font-size:13px;
+  }
+  .queue-item .tag{background:var(--green); color:#06240f; font-weight:900; font-size:10px; padding:2px 8px; border-radius:4px;}
+  .queue-item .dot{margin-left:auto; color:var(--dim); font-size:12px;}
+  .empty{color:var(--dim); font-size:13px; font-style:italic;}
+
+  /* section 3 */
+  .hub-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:14px;}
+  .hub-card .sector-line{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:6px;}
+  .hub-card .stream-text{font-size:12px; color:var(--dim); margin:4px 0 10px; min-height:32px;}
+  .hub-card .note.dim{color:var(--dim);}
+  .halal-card{border-color:#1e5c34; background:linear-gradient(180deg,#14261b,var(--panel2));}
+  .bar{background:#0b1017; border-radius:99px; height:14px; overflow:hidden; border:1px solid var(--line); margin:6px 0 4px;}
+  .bar i{display:block; height:100%; border-radius:99px; transition:width .5s;}
+  .bar-label{display:flex; justify-content:space-between; font-size:12px; color:var(--dim);}
+  .hub-card h4{font-size:14px; margin-bottom:8px;}
+  .stage-btns{display:flex; gap:6px; margin-top:12px; flex-wrap:wrap;}
+  .stage-btns button{font-size:10.5px; padding:6px 9px;}
+  .stage-btns button.on{outline:2px solid var(--ink);}
+  .btn-breakdown{background:var(--amber); color:#2a1c02;}
+  .btn-ready{background:var(--purple); color:#1d1435;}
+  .fert-strip{
+    margin-top:16px; background:var(--panel2); border:1px solid var(--line);
+    border-radius:10px; padding:14px 16px; display:flex; gap:24px; flex-wrap:wrap; align-items:center;
+  }
+  .fert-strip b{font-size:22px; font-variant-numeric:tabular-nums;}
+  .fert-strip .lab{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:1.2px;}
+  .fert-strip b{font-size:22px; font-variant-numeric:tabular-nums;}
+
+  /* section 4 — shop */
+  .shop-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:14px;}
+  .shop-card h4{font-size:14px;}
+  .shop-card .price{font-size:26px; font-weight:900; margin:6px 0 2px; color:var(--green);}
+  .shop-card.halal-card .price{color:#4ade80;}
+  .shop-card.halal-card{border-color:#1e5c34; background:linear-gradient(180deg,#14261b,var(--panel2));}
+  .shop-card .price small{font-size:12px; color:var(--dim); font-weight:600;}
+  .shop-card ul{list-style:none; margin:8px 0 12px;}
+  .shop-card li{font-size:12px; color:var(--dim); padding:3px 0; border-top:1px dashed var(--line);}
+  .order-strip{
+    margin-top:14px; background:#132a1b; border:1px solid #1f5133;
+    border-radius:10px; padding:12px 16px;
+  }
+  .order-line{font-size:14px;}
+  .order-sub{color:var(--dim); font-size:12px; margin-top:4px;}
+  .shop-stats{margin-top:14px;}
+
+  /* P&L dashboard */
+  .pl-strip{display:grid; grid-template-columns:repeat(6,1fr); gap:14px;}
+  .pl-net{
+    margin-top:12px; background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+    padding:16px 18px; display:grid; grid-template-columns:repeat(4,1fr); gap:16px; align-items:center;
+  }
+  .pl-net b{font-size:26px; font-variant-numeric:tabular-nums; display:block;}
+  .pl-net .lab{font-size:11px; color:var(--dim); text-transform:uppercase; letter-spacing:1.2px;}
+  .pos{color:var(--green);} .neg{color:var(--red);}
+  .sub-note{display:block; font-size:10px; color:var(--dim); font-weight:400; letter-spacing:.3px; margin-top:2px; text-transform:none;}
+  .bar.slim{height:8px; margin-top:6px;}
+  /* ---------- login gate ---------- */
+  #loginGate{
+    position:fixed; inset:0; background:var(--bg); z-index:100;
+    display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  #loginGate.hidden{display:none;}
+  .login-box{
+    width:100%; max-width:380px; background:var(--panel); border:1px solid var(--line);
+    border-radius:14px; padding:32px 28px; text-align:center;
+    border-top:4px solid var(--green);
+  }
+  .login-box .logo{width:52px; height:52px; background:var(--green); color:#06240f;
+    display:flex; align-items:center; justify-content:center; font-weight:900; font-size:22px;
+    border-radius:10px; margin:0 auto 14px;}
+  .login-box h1{font-size:20px; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:4px;}
+  .login-box p{color:var(--dim); font-size:12.5px; margin-bottom:20px;}
+  .login-box input{
+    width:100%; font:inherit; font-size:15px; padding:12px 14px; border-radius:8px;
+    background:var(--bg); border:1px solid var(--line); color:var(--ink); outline:none;
+  }
+  .login-box input:focus{border-color:var(--green);}
+  .login-box button{width:100%; margin-top:12px; padding:12px; font-size:14px;}
+  .login-box .note{margin-top:12px; text-align:left;}
+  .login-box .foot{margin-top:18px; font-size:10.5px; color:var(--dim); text-transform:uppercase; letter-spacing:1.2px;}
+
+  footer{text-align:center; color:var(--dim); font-size:11.5px; padding:10px; text-transform:uppercase; letter-spacing:1.5px;}
+
+  /* ---------- mobile ---------- */
+  @media (max-width: 640px){
+    body{padding-bottom:30px;}
+    header{flex-wrap:wrap; padding:14px 16px; gap:10px;}
+    header h1{font-size:17px; letter-spacing:.5px;}
+    header p{font-size:10px; letter-spacing:1px;}
+    header .clock{margin-left:auto; padding:6px 10px; font-size:12px; white-space:nowrap;}
+    .banner{padding:8px 16px; font-size:10.5px; letter-spacing:.8px;}
+    main{padding:14px 12px; gap:18px;}
+    section{padding:14px 12px; border-radius:10px;}
+    .sec-head h2{font-size:14px; letter-spacing:.8px;}
+    .sec-sub{font-size:12px;}
+    .card{padding:12px;}
+    .weight-big{font-size:22px;}
+    button{width:100%; padding:11px 14px; font-size:13px;}
+    .card .actions{flex-direction:column; align-items:stretch;}
+    .card .actions .badge{text-align:center;}
+    .stage-btns{flex-direction:column;}
+    .stage-btns button{font-size:11.5px;}
+    .worker-row{flex-wrap:wrap; gap:8px;}
+    .worker-row .who{flex:1 1 100%;}
+    .worker-row .carry{max-width:none; text-align:left; flex:1 1 auto;}
+    .worker-row select{flex:1 1 auto;}
+    .worker-row button{width:auto; flex:none;}
+    .queue-item{flex-wrap:wrap; gap:6px;}
+    .queue-item .dot{margin-left:0; width:100%; font-size:11px;}
+    .fert-strip{gap:14px; padding:12px;}
+    .fert-strip > div{flex:1 1 40%;}
+    .pl-strip{grid-template-columns:1fr 1fr;}
+    .pl-net{grid-template-columns:1fr 1fr;}
+    .pl-net b{font-size:20px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- login gate -->
+<div id="loginGate">
+  <div class="login-box">
+    <div class="logo">KL</div>
+    <h1>KL Organics Dispatch</h1>
+    <p>Operations portal — staff access only</p>
+    <input type="password" id="passInput" placeholder="Enter password" autocomplete="off">
+    <button id="loginBtn">Log in</button>
+    <div class="note" id="loginNote"></div>
+    <div class="foot">Demo build · access check runs in the browser only</div>
+  </div>
+</div>
+
+<header>
+  <div class="logo">KL</div>
+  <div>
+    <h1>KL Organics Dispatch</h1>
+    <p>Organic waste collection ops &middot; Kuala Lumpur</p>
+  </div>
+  <div class="clock">Hub time: <b id="clock">--:--</b> (sample)</div>
+</header>
+<div class="banner">Sample demo data only &middot; nothing is saved between visits &middot; dispatch rule: min 150 kg before 22:00</div>
+
+<main>
+
+  <!-- ============ SECTION 1 ============ -->
+  <section id="sec1">
+    <div class="sec-head"><span class="sec-num">01</span><h2>Pickup Requests</h2></div>
+    <p class="sec-sub">Restaurants and kedai makan request collection. Scheduling is allowed only if the container weighs at least 150 kg — unless it is 10:00 pm or later.</p>
+    <div class="req-grid" id="reqGrid"></div>
+  </section>
+
+  <!-- ============ SECTION 2 ============ -->
+  <section id="sec2">
+    <div class="sec-head"><span class="sec-num">02</span><h2>Gig Worker Queue</h2></div>
+    <p class="sec-sub">Assign a pickup request to an available worker. The worker's status and the active queue update immediately.</p>
+    <div id="workerList"></div>
+    <div class="queue-box">
+      <h4>Active dispatch queue</h4>
+      <div id="queueList"></div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 3 ============ -->
+  <section id="sec3">
+    <div class="sec-head"><span class="sec-num">03</span><h2>Processing Hub Status</h2></div>
+    <p class="sec-sub">Source-segregated waste streams from KL's food sectors, processed on dedicated lines following composting best practice. Track breakdown, fullness and fertiliser readiness per stream — the halal/mamak line stays fully segregated for halal-certified output.</p>
+    <div class="hub-grid" id="hubGrid"></div>
+    <div class="fert-strip">
+      <div><span class="lab">Standard fertiliser stock</span><br><b id="fertStock">0</b> <span class="lab">kg</span></div>
+      <div><span class="lab">Halal-certified stock</span><br><b id="halalStock">0</b> <span class="lab">kg</span></div>
+      <div><span class="lab">Batches ready for sale</span><br><b id="readyCount">0</b></div>
+      <div><span class="lab">Container fleet (500 kg each)</span><br><b id="fleetUsage">0 / 1000</b><div class="bar slim"><i id="fleetBar" style="width:0%; background:var(--blue)"></i></div></div>
+      <div style="flex:1 1 100%"><span class="lab">Fleet total load</span> <b id="fleetKg" style="font-size:14px">0 kg</b></div>
+      <div><span class="lab">Sales status</span><br><span class="badge b-purple" id="fertStatus">Building up</span></div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 4: P&L ============ -->
+  <section id="sec-pl">
+    <div class="sec-head"><span class="sec-num">CEO</span><h2>P&amp;L Dashboard — Live</h2></div>
+    <p class="sec-sub">Revenue, cost and margin for everything on this page: collection fees from premises, fertiliser sales, gig engagement and processing costs. Sample values, updated as you act. Nothing is saved between visits.</p>
+    <div class="fert-strip pl-strip">
+      <div><span class="lab">Collection fees (invoiced)</span><br><b id="plFees" class="pos">RM 0</b></div>
+      <div><span class="lab">Fertiliser sales</span><br><b id="plSales" class="pos">RM 0</b></div>
+      <div><span class="lab">Total revenue</span><br><b id="plRevenue" class="pos">RM 0</b></div>
+      <div><span class="lab">Gig engagement cost</span><br><b id="plGig" class="neg">RM 0</b></div>
+      <div><span class="lab">Processing cost</span><br><b id="plProc" class="neg">RM 0</b></div>
+      <div><span class="lab">Container cleaning fee</span><br><b id="plClean" class="neg">RM 0</b><span class="sub-note" id="plCleanSub"></span></div>
+      <div><span class="lab">Total costs</span><br><b id="plCosts" class="neg">RM 0</b></div>
+    </div>
+    <div class="pl-net">
+      <div><span class="lab">Net profit (sample)</span><b id="plNet" class="pos">RM 0</b></div>
+      <div><span class="lab">Margin</span><b id="plMargin" class="pos">—</b></div>
+      <div><span class="lab">Jobs completed</span><b id="plJobs">0</b></div>
+      <div><span class="lab">kg processed</span><b id="plKg">0</b></div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 4 ============ -->
+  <section id="sec4">
+    <div class="sec-head"><span class="sec-num">04</span><h2>Fertiliser Shop — Buy Online</h2></div>
+    <p class="sec-sub">Finished fertiliser from the processing hub, sold in three container sizes across two product lines — standard, and a premium halal-certified line from the segregated halal/mamak stream. Purchases draw down hub stock and confirm instantly on screen. Prices are sample values.</p>
+    <div class="shop-grid" id="shopGrid"></div>
+    <div class="order-strip" id="orderStrip" hidden>
+      <div class="order-line"><span class="badge b-green">Order confirmed</span> <b id="orderText"></b></div>
+      <div class="order-sub" id="orderSub"></div>
+    </div>
+    <div class="fert-strip shop-stats">
+      <div><span class="lab">Standard stock</span><br><b id="shopStock">0</b> <span class="lab">kg</span></div>
+      <div><span class="lab">Halal-certified stock</span><br><b id="shopStockHalal">0</b> <span class="lab">kg</span></div>
+      <div><span class="lab">Orders placed today</span><br><b id="orderCount">0</b></div>
+      <div><span class="lab">Sample revenue</span><br><b id="orderRevenue">RM 0</b></div>
+    </div>
+  </section>
+
+</main>
+
+<footer>KL Organics Dispatch — demo build, all data is fictional<br>
+<span style="font-size:10px; letter-spacing:.5px;">© 2026 KL Organics Dispatch. Proprietary business model — all rights reserved. Unauthorised copying or reuse prohibited.</span></footer>
+
+<script>
+// ---------- sample data (fictional) ----------
+let hubTime = 21 * 60 + 40; // minutes since midnight, 21:40
+
+const ENGAGEMENT_RATE = { // sample gig cost per completed job, RM
+  "GW-01": 35, "GW-02": 30, "GW-03": 38, "GW-04": 42, "GW-05": 33,
+};
+
+const requests = [
+  { id:"PK-101", shop:"Nasi Kandar Pelita, Mont Kiara",        area:"Mont Kiara",  sector:"Halal / Mamak", weight:186, window:"22:00 – 23:30", fee:120, payout:70, scheduled:false },
+  { id:"PK-102", shop:"Warung Buah Segar, TTDI",               area:"TTDI",        sector:"Wet market",    weight:94,  window:"21:00 – 22:30", fee:60,  payout:45, scheduled:false },
+  { id:"PK-103", shop:"Kedai Makan Ali, TTDI",                 area:"TTDI",        sector:"Halal / Mamak", weight:150, window:"20:30 – 22:00", fee:85,  payout:55, scheduled:false },
+  { id:"PK-104", shop:"Grand Sapphire Hotel, Bukit Bintang",   area:"Bukit Bintang", sector:"Hotel",       weight:320, window:"22:30 – 00:00", fee:180, payout:95, scheduled:false },
+  { id:"PK-105", shop:"Dragon Gate Chinese Restaurant, Pudu",  area:"Pudu",        sector:"Chinese / Thai", weight:240, window:"21:30 – 23:00", fee:140, payout:80, scheduled:false },
+  { id:"PK-106", shop:"Kopitiam Kasih Mamak, Bangsar",         area:"Bangsar",     sector:"Halal / Mamak", weight:210, window:"22:00 – 23:30", fee:110, payout:65, scheduled:false },
+  { id:"PK-107", shop:"Sakura Teppan Japanese, Mid Valley",    area:"Mid Valley",  sector:"Japanese",      weight:130, window:"21:00 – 22:30", fee:95,  payout:60, scheduled:false },
+  { id:"PK-108", shop:"Arabica Roastery Café, Damansara",      area:"Damansara",   sector:"Café",          weight:165, window:"20:30 – 22:00", fee:90,  payout:50, scheduled:false },
+  { id:"PK-109", shop:"Anjali Vegetarian Indian, Brickfields", area:"Brickfields", sector:"Indian",        weight:175, window:"21:30 – 23:00", fee:95,  payout:55, scheduled:false },
+];
+
+const workers = [
+  { id:"GW-01", name:"Farid Rahman",   status:"available", carrying:null,     zone:"Mont Kiara / Sri Hartamas" },
+  { id:"GW-02", name:"Nurul Izzah",    status:"available", carrying:null,     zone:"TTDI / Bandar Utama" },
+  { id:"GW-03", name:"Kavitha Devi",   status:"assigned",  carrying:"PK-103", zone:"Bangsar / Mid Valley" },
+  { id:"GW-04", name:"Arif Zulkifli",  status:"available", carrying:null,     zone:"Bukit Bintang / Pudu" },
+  { id:"GW-05", name:"Michelle Tan",   status:"available", carrying:null,     zone:"Damansara / Brickfields" },
+];
+
+// Processing hub — source-segregated waste streams across a 1,000-container fleet.
+// Every container holds max 500 kg. Streams follow composting best practice:
+// per-stream breakdown rates, contamination notes, dedicated halal-certified line.
+const hubBatches = [
+  { id:"HB-HR", name:"Hotel restaurant — buffet & banquet waste", sector:"Hotels", stream:"Cooked buffet surplus, plate scrapings, coffee grounds", breakdown:55, fullness:64, stage:"collected", containers:90, yieldKg:150, note:"Mixed cooked foods — pre-screened for cutlery & napkins" },
+  { id:"HB-CT", name:"Chinese & Thai restaurant — kitchen prep waste", sector:"Chinese / Thai", stream:"Vegetable trimmings, fruit peel, rice, uncooked seafood shell-out", breakdown:72, fullness:81, stage:"breaking-down", containers:120, yieldKg:130, note:"High-nitrogen greens — fastest hot-compost stream" },
+  { id:"HB-FC", name:"Franchise café — coffee & food waste", sector:"Cafés", stream:"Spent coffee grounds, tea leaves, expired pastries, milk residue", breakdown:40, fullness:47, stage:"breaking-down", containers:60, yieldKg:100, note:"Coffee grounds add nitrogen — paired with brown cardboard bedding" },
+  { id:"HB-JP", name:"Japanese restaurant — prep & sushi bar waste", sector:"Japanese", stream:"Raw fish trim, rice, seaweed, vegetable garnish, tempura oil-absorbent", breakdown:33, fullness:38, stage:"collected", containers:45, yieldKg:110, note:"Protein-heavy — requires longer thermophilic phase, no oils" },
+  { id:"HB-IN", name:"Indian restaurant — vegetarian prep waste", sector:"Indian", stream:"Vegetable peel, dhal and spice residue, rice, ghee-trapped solids", breakdown:58, fullness:70, stage:"breaking-down", containers:75, yieldKg:120, note:"Ghee screened out before composting — oil slows microbes" },
+  { id:"HB-HL", name:"Halal restaurants & mamak — certified halal line", sector:"Halal / Mamak", stream:"Nasi kandar banjir leftovers, roti canai dough, dhal, tea waste", breakdown:88, fullness:92, stage:"ready", containers:180, yieldKg:160, halal:true, note:"Fully segregated halal supply chain — dedicated bins, vehicles & compost bays" },
+];
+const FLEET_SIZE = 1000;        // total containers at the hub
+const CONTAINER_CAP = 500;      // kg per container
+const PROCESSING_COST_PER_KG = 0.40; // sample processing cost, RM per intake kg
+const CLEANING_FEE_PER_CONTAINER = 5; // RM 5 cleaning & desanitation per container leaving the hub
+
+// ---------- helpers ----------
+const fmtTime = m => String(Math.floor(m/60)).padStart(2,"0") + ":" + String(m%60).padStart(2,"0");
+const stageLabel = { "collected":"Collected", "breaking-down":"Breaking down", "ready":"Ready for fertiliser sale" };
+const stageBadge = { "collected":"b-blue", "breaking-down":"b-amber", "ready":"b-purple" };
+
+function canSchedule(weight){ return weight >= 150 || hubTime >= 22*60; }
+
+// ---------- section 1 render ----------
+function renderRequests(){
+  const grid = document.getElementById("reqGrid");
+  grid.innerHTML = "";
+  requests.forEach(r => {
+    const ok = canSchedule(r.weight);
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h3>${r.shop}</h3>
+      <div class="meta">${r.area} &middot; ${r.id} &middot; <span class="badge ${r.sector === "Halal / Mamak" ? "b-green" : "b-blue"}">${r.sector}</span></div>
+      <div class="row"><span>Container weight</span><span class="weight-big">${r.weight}<small> kg</small></span></div>
+      <div class="row"><span>Pickup window</span><span>${r.window}</span></div>
+      <div class="row"><span>Collection fee (paid by premise)</span><span><b>RM ${r.fee}</b></span></div>
+      <div class="row"><span>Rule check</span><span class="badge ${ok ? "b-green" : "b-red"}">${ok ? "Can schedule now" : "Must wait until 22:00"}</span></div>
+      <div class="actions">
+        <button ${r.scheduled || !ok ? "disabled" : ""}>${r.scheduled ? "Scheduled ✓" : "Schedule pickup"}</button>
+        ${r.scheduled ? '<span class="badge b-green">In dispatch queue</span>' : ""}
+      </div>
+      <div class="note ${ok ? "ok" : "err"}">
+        ${r.scheduled ? "Assigned to the gig worker queue." :
+          ok ? (r.weight >= 150 ? "Meets the 150 kg minimum." : "After 22:00 — minimum weight waived.") :
+          "Blocked: " + r.weight + " kg is below the 150 kg minimum before 22:00."}
+      </div>`;
+    if (!r.scheduled && ok) {
+      card.querySelector("button").onclick = () => scheduleRequest(r.id);
+    }
+    grid.appendChild(card);
+  });
+}
+
+function scheduleRequest(id){
+  const r = requests.find(x => x.id === id);
+  if (!canSchedule(r.weight)) return;
+  r.scheduled = true;
+  renderRequests(); renderWorkers(); renderQueue(); renderPL();
+}
+
+// ---------- section 2 render ----------
+function renderWorkers(){
+  const list = document.getElementById("workerList");
+  list.innerHTML = "";
+  const schedulable = requests.filter(r => r.scheduled && !isCarried(r.id));
+  workers.forEach(w => {
+    const row = document.createElement("div");
+    row.className = "worker-row";
+    const options = ['<option value="">— choose scheduled pickup —</option>']
+      .concat(schedulable.map(r => `<option value="${r.id}">${r.id} · ${r.shop}</option>`)).join("");
+    row.innerHTML = `
+      <div class="avatar">${w.name.split(" ").map(s=>s[0]).join("").slice(0,2)}</div>
+      <div class="who"><b>${w.name}</b><span>${w.id} &middot; ${w.zone}</span></div>
+      <span class="badge ${w.status === "available" ? "b-green" : "b-blue"}">${w.status}</span>
+      <div class="carry">${w.carrying ? "Carrying " + w.carrying : ""}</div>
+      ${w.status === "available" ? `<select>${options}</select><button>Assign</button>` : `<button class="ghost">Release</button>`}
+    `;
+    const rate = ENGAGEMENT_RATE[w.id] || 0;
+    const rateEl = document.createElement("span");
+    rateEl.className = "badge b-purple";
+    rateEl.textContent = "RM " + rate + "/job";
+    row.appendChild(rateEl);
+    if (w.status === "available") {
+      const sel = row.querySelector("select");
+      const btn = row.querySelector("button");
+      if (schedulable.length === 0) { sel.disabled = true; btn.disabled = true; sel.innerHTML = '<option>no scheduled pickups</option>'; }
+      btn.onclick = () => assignPickup(w.id, sel.value);
+    } else {
+      row.querySelector("button").onclick = () => releaseWorker(w.id);
+    }
+    list.appendChild(row);
+  });
+}
+
+function isCarried(id){ return workers.some(w => w.carrying === id); }
+
+function assignPickup(workerId, requestId){
+  if (!requestId) return;
+  const w = workers.find(x => x.id === workerId);
+  const r = requests.find(x => x.id === requestId);
+  if (!w || !r || w.status !== "available") return;
+  w.carrying = requestId;
+  w.status = "assigned";
+  r.scheduled = true;
+  renderWorkers(); renderQueue(); renderRequests(); renderPL();
+}
+
+function releaseWorker(workerId){
+  const w = workers.find(x => x.id === workerId);
+  if (!w) return;
+  w.status = "available";
+  w.carrying = null;
+  renderWorkers(); renderQueue(); renderPL();
+}
+
+function renderQueue(){
+  const q = document.getElementById("queueList");
+  const active = workers.filter(w => w.carrying);
+  if (active.length === 0) { q.innerHTML = '<p class="empty">Queue is empty — schedule a pickup above, then assign it to a worker.</p>'; return; }
+  q.innerHTML = "";
+  active.forEach(w => {
+    const r = requests.find(x => x.id === w.carrying);
+    const div = document.createElement("div");
+    div.className = "queue-item";
+    div.innerHTML = `<span class="tag">${r.id}</span><b>${r.shop}</b><span>→ ${w.name}</span><span class="dot">${r.area} · ${r.window} · fee RM ${r.fee} · cost RM ${ENGAGEMENT_RATE[w.id]} · ${Math.ceil(r.weight / CONTAINER_CAP)} container cleaning RM ${Math.ceil(r.weight / CONTAINER_CAP) * CLEANING_FEE_PER_CONTAINER}</span>`;
+    q.appendChild(div);
+  });
+}
+
+// ---------- section 3 render ----------
+function renderHub(){
+  const grid = document.getElementById("hubGrid");
+  grid.innerHTML = "";
+  hubBatches.forEach(b => {
+    const color = b.stage === "collected" ? "var(--blue)" : b.stage === "breaking-down" ? "var(--amber)" : "var(--purple)";
+    const card = document.createElement("div");
+    card.className = "card hub-card" + (b.halal ? " halal-card" : "");
+    card.innerHTML = `
+      <h4>${b.name}</h4>
+      <div class="sector-line">
+        <span class="badge ${b.halal ? "b-green" : "b-blue"}">${b.sector}</span>
+        ${b.halal ? '<span class="badge b-green">Halal-certified output</span>' : ""}
+      </div>
+      <p class="stream-text">${b.stream}</p>
+      <div class="bar-label"><span>Breakdown progress</span><span>${b.breakdown}% · ${Math.round(b.containers * CONTAINER_CAP * b.breakdown / 100)} kg converted</span></div>
+      <div class="bar"><i style="width:${b.breakdown}%; background:${color}"></i></div>
+      <div class="bar-label"><span>Container fullness</span><span>${b.fullness}% · ${Math.round(b.containers * CONTAINER_CAP * b.fullness / 100)} kg in ${b.containers} containers</span></div>
+      <div class="bar"><i style="width:${b.fullness}%; background:${b.fullness >= 80 ? "var(--red)" : "var(--green)"}"></i></div>
+      <div class="note ok">Output: ~${b.yieldKg} kg fertiliser when ready${b.halal ? " (halal-certified)" : ""}</div>
+      <p class="note dim">${b.note}</p>
+      <div class="stage-btns">
+        <button class="ghost ${b.stage==="collected"?"on":""}" data-s="collected">Collected</button>
+        <button class="ghost btn-breakdown ${b.stage==="breaking-down"?"on":""}" data-s="breaking-down">Breaking down</button>
+        <button class="ghost btn-ready ${b.stage==="ready"?"on":""}" data-s="ready">Ready for sale</button>
+      </div>`;
+    card.querySelectorAll(".stage-btns button").forEach(btn => {
+      btn.onclick = () => setStage(b.id, btn.dataset.s);
+    });
+    grid.appendChild(card);
+  });
+  const ready = hubBatches.filter(b => b.stage === "ready");
+  document.getElementById("fertStock").textContent = readyStock();
+  document.getElementById("halalStock").textContent = halalReadyStock();
+  document.getElementById("readyCount").textContent = ready.length;
+  const fleetUsed = hubBatches.reduce((s, b) => s + b.containers, 0);
+  const fleetKg = hubBatches.reduce((s, b) => s + b.containers * CONTAINER_CAP * b.fullness / 100, 0);
+  const fleetCap = FLEET_SIZE * CONTAINER_CAP;
+  document.getElementById("fleetUsage").textContent = fleetUsed + " / " + FLEET_SIZE;
+  document.getElementById("fleetBar").style.width = (fleetUsed / FLEET_SIZE * 100) + "%";
+  document.getElementById("fleetKg").textContent = Math.round(fleetKg) + " kg of " + fleetCap + " kg";
+  const st = document.getElementById("fertStatus");
+  st.textContent = readyStock() + halalReadyStock() > 0 ? "Ready for fertiliser sales" : "Building up";
+  st.className = "badge " + (readyStock() + halalReadyStock() > 0 ? "b-green" : "b-amber");
+}
+
+function setStage(id, stage){
+  const b = hubBatches.find(x => x.id === id);
+  if (!b) return;
+  b.stage = stage;
+  if (stage === "collected") b.breakdown = Math.min(b.breakdown, 15);
+  if (stage === "breaking-down" && b.breakdown < 15) b.breakdown = 35;
+  if (stage === "ready") b.breakdown = 100;
+  renderHub(); shopRenderStats(); renderPL();
+}
+
+// ---------- section 4: fertiliser shop ----------
+const shopProducts = [
+  { id:"FG-1",  line:"standard", name:"1 kg Home Pack",   kg:1,  price:12,  note:"Balcony plants & herbs" },
+  { id:"FG-5",  line:"standard", name:"5 kg Garden Bag",  kg:5,  price:45,  note:"Home gardens & lawns" },
+  { id:"FG-10", line:"standard", name:"10 kg Farm Sack",  kg:10, price:80,  note:"Nursery & farm plots" },
+  { id:"FH-1",  line:"halal",    name:"1 kg Halal Home Pack",  kg:1,  price:14,  note:"Halal-certified · balcony plants" },
+  { id:"FH-5",  line:"halal",    name:"5 kg Halal Garden Bag", kg:5,  price:52,  note:"Halal-certified · home gardens" },
+  { id:"FH-10", line:"halal",    name:"10 kg Halal Farm Sack", kg:10, price:92,  note:"Halal-certified · nursery & farm plots" },
+];
+const orders = [];
+
+function shopRenderStats(){
+  const stock = readyStock();
+  const halalStock = halalReadyStock();
+  document.getElementById("shopStock").textContent = stock;
+  document.getElementById("shopStockHalal").textContent = halalStock;
+  document.getElementById("orderCount").textContent = orders.length;
+  document.getElementById("orderRevenue").textContent = "RM " + orders.reduce((s,o)=>s+o.total,0);
+  const grid = document.getElementById("shopGrid");
+  grid.innerHTML = "";
+  shopProducts.forEach(p => {
+    const avail = p.line === "halal" ? halalStock : stock;
+    const affordable = avail >= p.kg;
+    const card = document.createElement("div");
+    card.className = "card shop-card" + (p.line === "halal" ? " halal-card" : "");
+    card.innerHTML = `
+      <h4>${p.name}</h4>
+      <div class="price">RM ${p.price}<small> / container</small></div>
+      <ul><li>${p.note}</li><li>${p.kg} kg of finished fertiliser</li></ul>
+      <div class="actions"><button ${affordable ? "" : "disabled"}>Buy now</button></div>
+      <div class="note ${affordable ? "ok" : "err"}">
+        ${affordable ? (p.line === "halal" ? "In stock from the halal-certified line." : "In stock from the processing hub.") :
+          "Not enough " + (p.line === "halal" ? "halal" : "hub") + " stock (need " + p.kg + " kg)."}
+      </div>`;
+    if (affordable) card.querySelector("button").onclick = () => buyFertiliser(p.id);
+    grid.appendChild(card);
+  });
+}
+
+function buyFertiliser(id){
+  const p = shopProducts.find(x => x.id === id);
+  const avail = p.line === "halal" ? halalReadyStock() : readyStock();
+  if (!p || avail < p.kg) return;
+  if (p.line === "halal") halalSold += p.kg; else fertSold += p.kg;
+  orders.push({ ...p, total: p.price });
+  const strip = document.getElementById("orderStrip");
+  strip.hidden = false;
+  document.getElementById("orderText").textContent =
+    p.name + " — RM " + p.price + " paid (sample).";
+  document.getElementById("orderSub").textContent =
+    "Order #" + (100 + orders.length) + " · " + p.kg + " kg " +
+    (p.line === "halal" ? "halal-certified " : "") + "fertiliser from hub stock · pickup point: Processing Hub, TTDI · nothing is actually charged.";
+  shopRenderStats();
+  renderHub();
+  renderPL();
+}
+
+let fertSold = 0;
+let halalSold = 0;
+
+function readyStock(){
+  const ready = hubBatches.filter(b => b.stage === "ready" && !b.halal).length;
+  return Math.max(0, ready * 120 - fertSold); // fictional fixed sample yield per ready batch
+}
+
+function halalReadyStock(){
+  const ready = hubBatches.filter(b => b.stage === "ready" && b.halal).length;
+  return Math.max(0, ready * 160 - halalSold);
+}
+
+// ---------- P&L dashboard ----------
+const FIXED_OVERHEAD = 850; // sample daily hub overhead, RM
+
+function renderPL(){
+  const carried = workers.filter(w => w.carrying);
+  const feeRevenue = carried.reduce((s, w) => {
+    const r = requests.find(x => x.id === w.carrying);
+    return s + (r ? r.fee : 0);
+  }, 0);
+  const gigCost = carried.reduce((s, w) => s + (ENGAGEMENT_RATE[w.id] || 0), 0);
+  const salesRevenue = orders.reduce((s, o) => s + o.total, 0);
+  const intakeKg = carried.reduce((s, w) => {
+    const r = requests.find(x => x.id === w.carrying);
+    return s + (r ? r.weight : 0);
+  }, 0);
+  const procCost = Math.round(intakeKg * PROCESSING_COST_PER_KG);
+  const containersUsed = carried.reduce((s, w) => {
+    const r = requests.find(x => x.id === w.carrying);
+    return s + (r ? Math.ceil(r.weight / CONTAINER_CAP) : 0);
+  }, 0);
+  const cleaningCost = containersUsed * CLEANING_FEE_PER_CONTAINER;
+  const revenue = feeRevenue + salesRevenue;
+  const costs = gigCost + procCost + cleaningCost + FIXED_OVERHEAD;
+  const net = revenue - costs;
+  document.getElementById("plFees").textContent = "RM " + feeRevenue;
+  document.getElementById("plSales").textContent = "RM " + salesRevenue;
+  document.getElementById("plRevenue").textContent = "RM " + revenue;
+  document.getElementById("plGig").textContent = "RM " + gigCost;
+  document.getElementById("plProc").textContent = "RM " + procCost;
+  document.getElementById("plClean").textContent = "RM " + cleaningCost;
+  document.getElementById("plCleanSub").textContent =
+    containersUsed + " container" + (containersUsed === 1 ? "" : "s") + " × RM " + CLEANING_FEE_PER_CONTAINER + " cleaning & desanitation fee";
+  document.getElementById("plCosts").textContent = "RM " + costs;
+  const netEl = document.getElementById("plNet");
+  netEl.textContent = "RM " + net;
+  netEl.className = net >= 0 ? "pos" : "neg";
+  document.getElementById("plMargin").textContent = revenue > 0 ? Math.round(net / revenue * 100) + "%" : "—";
+  document.getElementById("plJobs").textContent = carried.length;
+  document.getElementById("plKg").textContent = intakeKg + " kg";
+}
+// ---------- login gate ----------
+const APP_PASSWORD = "Tiffany";
+function tryLogin(){
+  const val = document.getElementById("passInput").value;
+  const note = document.getElementById("loginNote");
+  if (val === APP_PASSWORD) {
+    document.getElementById("loginGate").classList.add("hidden");
+    note.textContent = "";
+  } else {
+    note.textContent = "Wrong password — access denied.";
+    note.className = "note err";
+  }
+}
+document.getElementById("loginBtn").addEventListener("click", tryLogin);
+document.getElementById("passInput").addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
+
+// ---------- sample clock (ticks for demo only) ----------
+function tickClock(){
+  hubTime = (hubTime + 1) % (24*60);
+  document.getElementById("clock").textContent = fmtTime(hubTime);
+}
+document.getElementById("clock").textContent = fmtTime(hubTime);
+setInterval(tickClock, 1000);
+
+// ---------- init: never empty ----------
+renderRequests(); renderWorkers(); renderQueue(); renderHub(); shopRenderStats(); renderPL();
+</script>
+</body>
+</html>

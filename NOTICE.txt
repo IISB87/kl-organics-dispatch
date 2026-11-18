@@ -1,0 +1,17 @@
+KL ORGANICS DISPATCH — PROPRIETARY NOTICE
+
+© 2026 KL Organics Dispatch. All rights reserved.
+
+This software and the business model it implements — organic waste
+collection dispatch (premise collection fees), gig-worker assignment
+(per-job engagement costs), container cleaning & desanitation fees,
+sector-segregated processing (including the halal-certified line),
+fertiliser retail (standard and halal product lines), and the live
+P&L model — are the proprietary and confidential work product of the
+owner. The concept, fee structures, operational workflows, and data
+model embodied here may not be copied, reproduced, reverse-engineered,
+or used to operate a competing service without the owner's prior
+written permission.
+
+All figures displayed in the application are fictional sample values
+for demonstration purposes only.
